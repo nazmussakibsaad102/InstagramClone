@@ -74,15 +74,18 @@ public class SignUp extends AppCompatActivity {
                     query.getFirstInBackground(new GetCallback<ParseObject>() {
                         public void done(ParseObject object, ParseException e) {
                             if (e == null) {
-                                String playerName = object.getString("name");
-                                int PUNCH_SPEED = object.getInt("punch_speed");
-                                int KICK_SPEED = object.getInt("kick_speed");
-                                int FLYING_KICK = object.getInt("flying_kick");
+                                if (object != null){
+                                    String playerName = object.getString("name");
+                                    int PUNCH_SPEED = object.getInt("punch_Speed");
+                                    int KICK_SPEED = object.getInt("kick_speed");
+                                    int FLYING_KICK = object.getInt("flying_kick");
 
-                                txtShowData.setText("Player name: " + playerName
-                                + "\n Punch Speed: " + PUNCH_SPEED
-                                + "\n Kick Speed: "+ KICK_SPEED
-                                + "\n Flying Kick:"+ FLYING_KICK );
+                                    txtShowData.setText("Player name: " + playerName
+                                            + "\n Punch Speed: " + PUNCH_SPEED
+                                            + "\n Kick Speed: "+ KICK_SPEED
+                                            + "\n Flying Kick:"+ FLYING_KICK );
+                                }
+
                             } else {
                                 // Something is wrong
                                 FancyToast.makeText(SignUp.this,e.toString(),FancyToast.LENGTH_LONG,FancyToast.ERROR,true).show();

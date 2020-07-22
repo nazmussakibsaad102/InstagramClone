@@ -6,16 +6,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 import com.shashank.sony.fancytoastlib.FancyToast;
 
 public class SignUp extends AppCompatActivity {
     private EditText mEditTextPlayerName, mEditTextPunchSpeed, mEditTextKickSpeed, mEditTextFlyingSpeed;
-    private Button btnSave;
+    private Button btnSave, btnGetData;
+    private TextView txtShowData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,8 @@ public class SignUp extends AppCompatActivity {
         mEditTextKickSpeed = findViewById(R.id.edtKickSpeed);
         mEditTextFlyingSpeed = findViewById(R.id.edtFlyingKick);
         btnSave = findViewById(R.id.btnSave);
+        btnGetData = findViewById(R.id.btnGetData);
+        txtShowData = findViewById(R.id.txtShowData);
 
             btnSave.setOnClickListener(new View.OnClickListener() {
 
@@ -59,6 +65,34 @@ public class SignUp extends AppCompatActivity {
 
                 }
             });
+
+            btnGetData.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Boxer");
+                    query.whereEqualTo("objectId", "CgpvNLpE5p");
+                    query.getFirstInBackground(new GetCallback<ParseObject>() {
+                        public void done(ParseObject object, ParseException e) {
+                            if (e == null) {
+                                String playerName = object.getString("name");
+                                int PUNCH_SPEED = object.getInt("punch_speed");
+                                int KICK_SPEED = object.getInt("kick_speed");
+                                int FLYING_KICK = object.getInt("flying_kick");
+
+                                txtShowData.setText("Player name: " + playerName
+                                + "\n Punch Speed: " + PUNCH_SPEED
+                                + "\n Kick Speed: "+ KICK_SPEED
+                                + "\n Flying Kick:"+ FLYING_KICK );
+                            } else {
+                                // Something is wrong
+                                FancyToast.makeText(SignUp.this,e.toString(),FancyToast.LENGTH_LONG,FancyToast.ERROR,true).show();
+                            }
+                        }
+                    });
+                }
+            });
+
+
 
 
 

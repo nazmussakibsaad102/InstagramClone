@@ -2,6 +2,7 @@ package com.saad102.instagramclone;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,7 +19,7 @@ import com.shashank.sony.fancytoastlib.FancyToast;
 
 public class SignUp extends AppCompatActivity {
     private EditText mEditTextPlayerName, mEditTextPunchSpeed, mEditTextKickSpeed, mEditTextFlyingSpeed;
-    private Button btnSave, btnGetData;
+    private Button btnSave, btnGetData, btnAnotherActivity;
     private TextView txtShowData;
 
     @Override
@@ -31,6 +32,7 @@ public class SignUp extends AppCompatActivity {
         mEditTextFlyingSpeed = findViewById(R.id.edtFlyingKick);
         btnSave = findViewById(R.id.btnSave);
         btnGetData = findViewById(R.id.btnGetData);
+        btnAnotherActivity = findViewById(R.id.btnAnotherActivity);
         txtShowData = findViewById(R.id.txtShowData);
 
             btnSave.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +94,13 @@ public class SignUp extends AppCompatActivity {
                             }
                         }
                     });
+                }
+            });
+            btnAnotherActivity.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(SignUp.this, SignupLoginActivity.class);
+                    startActivity(i);
                 }
             });
 

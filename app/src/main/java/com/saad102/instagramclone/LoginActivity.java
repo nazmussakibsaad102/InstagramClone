@@ -2,8 +2,12 @@ package com.saad102.instagramclone;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -23,36 +27,72 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setTitle("Log In");
         edtMail = findViewById(R.id.edtLoginEmail);
         edtPass = findViewById(R.id.edtLoginPassword);
+        edtPass.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // If the event is a key-down event on the "enter" button
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    // Perform action on key press
+                    onClick(btnLogin);
+                    return true;
+                }
+                return false;
+            }
+        });
         btnLogin = findViewById(R.id.btnLoginActivity);
         btnSignUp = findViewById(R.id.btnSignUpLoginActivity);
 
         btnLogin.setOnClickListener(this);
         btnSignUp.setOnClickListener(this);
-//        if (ParseUser.getCurrentUser() != null){
-//            ParseUser.getCurrentUser().logOut();
-//        }
+        if (ParseUser.getCurrentUser() != null){
+            ParseUser.getCurrentUser().logOut();
+        }
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btnLoginActivity:
-                ParseUser.logInInBackground(edtMail.getText().toString(),
-                        edtPass.getText().toString(),
-                        new LogInCallback() {
-                    public void done(ParseUser user, ParseException e) {
-                        if (user != null && e == null) {
-                            // Hooray! The user is logged in.
-                            FancyToast.makeText(LoginActivity.this,"Hello World !",FancyToast.LENGTH_LONG, FancyToast.SUCCESS,true).show();
-                        } else if (e != null){
-                            // Signup failed. Look at the ParseException to see what happened.
-                            FancyToast.makeText(LoginActivity.this,e.getMessage(),FancyToast.LENGTH_LONG,FancyToast.ERROR,true).show();
-                        }
-                    }
-                });
+
+                if (edtMail.getText().toString().equals("")
+                || edtPass.getText().toString().equals("")){
+                    FancyToast.makeText(LoginActivity.this,"Email/ Username and password both required!",FancyToast.LENGTH_LONG, FancyToast.SUCCESS,true).show();
+
+                }else {
+
+                    final ProgressDialog pd = new ProgressDialog(LoginActivity.this);
+                    pd.setMessage("Logging in");
+                    pd.show();
+                    pd.setCancelable(false);
+                    ParseUser.logInInBackground(edtMail.getText().toString(),
+                            edtPass.getText().toString(),
+                            new LogInCallback() {
+                                public void done(ParseUser user, ParseException e) {
+                                    if (user != null && e == null) {
+                                        // Hooray! The user is logged in.
+                                        FancyToast.makeText(LoginActivity.this, ParseUser.getCurrentUser().getUsername() + " logged in successfully", FancyToast.LENGTH_LONG, FancyToast.SUCCESS, true).show();
+                                        pd.dismiss();
+                                    } else if (e != null) {
+                                        // Signup failed. Look at the ParseException to see what happened.
+                                        FancyToast.makeText(LoginActivity.this, e.getMessage(), FancyToast.LENGTH_LONG, FancyToast.ERROR, true).show();
+                                    }
+                                }
+                            });
+                }
                 break;
             case R.id.btnSignUpLoginActivity:
                 break;
         }
+    }
+    public void onScreenTap(View view){
+        try {
+            InputMethodManager inputMethodManager =
+                    (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+        }catch (Exception e){
+
+        }
+
     }
 }

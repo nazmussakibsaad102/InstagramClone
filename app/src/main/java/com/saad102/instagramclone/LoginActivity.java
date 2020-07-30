@@ -3,6 +3,7 @@ package com.saad102.instagramclone;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -44,9 +45,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         btnLogin.setOnClickListener(this);
         btnSignUp.setOnClickListener(this);
-        if (ParseUser.getCurrentUser() != null){
-            ParseUser.getCurrentUser().logOut();
-        }
+
     }
 
     @Override
@@ -69,15 +68,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             new LogInCallback() {
                                 public void done(ParseUser user, ParseException e) {
                                     if (user != null && e == null) {
+                                        transitionToSocialMediaActivity();
                                         // Hooray! The user is logged in.
                                         FancyToast.makeText(LoginActivity.this, ParseUser.getCurrentUser().getUsername() + " logged in successfully", FancyToast.LENGTH_LONG, FancyToast.SUCCESS, true).show();
-                                        pd.dismiss();
+
                                     } else if (e != null) {
                                         // Signup failed. Look at the ParseException to see what happened.
                                         FancyToast.makeText(LoginActivity.this, e.getMessage(), FancyToast.LENGTH_LONG, FancyToast.ERROR, true).show();
                                     }
                                 }
                             });
+                    pd.dismiss();
                 }
                 break;
             case R.id.btnSignUpLoginActivity:
@@ -94,5 +95,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         }
 
+    }
+    private void transitionToSocialMediaActivity() {
+        Intent i = new Intent(LoginActivity.this,SocialMediaActivity.class);
+        startActivity(i);
     }
 }

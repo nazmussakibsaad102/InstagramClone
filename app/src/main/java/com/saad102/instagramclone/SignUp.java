@@ -32,13 +32,12 @@ import java.util.List;
 public class SignUp extends AppCompatActivity implements View.OnClickListener {
     private EditText edtMail, edtUserName, edtPassword;
     private Button btnSignUp, btnLogin;
-    private ParseQuery<ParseUser> queryMail;
-    private ParseQuery<ParseUser> queryUserName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
 
         setTitle("Sign Up");
 
@@ -46,11 +45,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         edtMail = findViewById(R.id.edtSignUpEmail);
         edtUserName = findViewById(R.id.edtSignUpUsername);
         edtPassword = findViewById(R.id.edtSignUpPassword);
-//finding existing email and password
-        queryMail = ParseUser.getQuery();
-        queryMail.whereEqualTo("email", edtMail.getText().toString());
-        queryUserName = ParseUser.getQuery();
-        queryUserName.whereEqualTo("username", edtUserName.getText().toString());
+
 
         edtPassword.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -71,14 +66,23 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         btnSignUp.setOnClickListener(this);
         btnLogin.setOnClickListener(this);
 
-
+        if (ParseUser.getCurrentUser() != null){
+            //ParseUser.getCurrentUser().logOut();
+            transitionToSocialMediaActivity();
+        }
 
 
 
     }
 
+
+
     @Override
     public void onClick(View view) {
+
+
+
+
         switch (view.getId()){
             case R.id.btnSignUp:
                 if (edtMail.getText().toString().equals("") ||
@@ -86,39 +90,39 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                 edtPassword.getText().toString().equals("")){
                     FancyToast.makeText(SignUp.this,"E mail, Username and Password all are requred!",FancyToast.LENGTH_LONG,FancyToast.SUCCESS,true).show();
 
-                }else if (queryMail != null || queryUserName != null) {
 
-                    FancyToast.makeText(SignUp.this, "E mail/Username already exists", FancyToast.LENGTH_LONG, FancyToast.ERROR, true).show();
+                }else  {
+                        final ParseUser user = new ParseUser();
+                        user.setUsername(edtUserName.getText().toString());
+                        user.setPassword(edtPassword.getText().toString());
+                        user.setEmail(edtMail.getText().toString());
+                        final ProgressDialog pd = new ProgressDialog(SignUp.this);
+                        pd.setMessage("Signing Up");
+                        pd.show();
+                        pd.setCancelable(false);
 
-                }else {
-
-                    final ParseUser user = new ParseUser();
-                    user.setUsername(edtUserName.getText().toString());
-                    user.setPassword(edtPassword.getText().toString());
-                    user.setEmail(edtMail.getText().toString());
-                    final ProgressDialog pd = new ProgressDialog(SignUp.this);
-                    pd.setMessage("Signing Up");
-                    pd.show();
-                    pd.setCancelable(false);
 
 
 
 // other fields can be set just like with ParseObject
 
-                    user.signUpInBackground(new SignUpCallback() {
-                        public void done(ParseException e) {
-                            if (e == null ) {
-                                // Hooray! Let them use the app now.
-                                FancyToast.makeText(SignUp.this, "Congratulations " + user.getUsername() + ", your id is created successfully.", FancyToast.LENGTH_LONG, FancyToast.SUCCESS, true).show();
-                            } else {
-                                // Sign up didn't succeed. Look at the ParseException
-                                // to figure out what went wrong
-                                FancyToast.makeText(SignUp.this, e.getMessage(), FancyToast.LENGTH_LONG, FancyToast.ERROR, true);
+                        user.signUpInBackground(new SignUpCallback() {
+                            public void done(ParseException e) {
+                                if (e == null ) {
+                                    // Hooray! Let them use the app now.
+                                    FancyToast.makeText(SignUp.this, "Congratulations " + user.getUsername() + ", your id is created successfully.", FancyToast.LENGTH_LONG, FancyToast.SUCCESS, true).show();
+                                    transitionToSocialMediaActivity();
+                                } else {
+
+                                    // Sign up didn't succeed. Look at the ParseException
+                                    // to figure out what went wrong
+                                    FancyToast.makeText(SignUp.this, e.getMessage(), FancyToast.LENGTH_LONG, FancyToast.ERROR, true);
+                                }
+                                pd.dismiss();
                             }
-                            pd.dismiss();
-                        }
-                    });
-                }
+                        });
+                    }
+
                 break;
             case R.id.btnLogIn:
                 Intent i = new Intent(SignUp.this, LoginActivity.class);
@@ -136,5 +140,9 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
 
         }
 
+    }
+    private void transitionToSocialMediaActivity() {
+        Intent i = new Intent(SignUp.this,SocialMediaActivity.class);
+        startActivity(i);
     }
 }

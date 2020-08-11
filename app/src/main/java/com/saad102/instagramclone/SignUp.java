@@ -36,6 +36,13 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        if (ParseUser.getCurrentUser() != null){
+            //ParseUser.getCurrentUser().logOut();
+            transitionToSocialMediaActivity();
+        }
+
         setContentView(R.layout.activity_sign_up);
 
 
@@ -65,12 +72,6 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
 
         btnSignUp.setOnClickListener(this);
         btnLogin.setOnClickListener(this);
-
-        if (ParseUser.getCurrentUser() != null){
-            //ParseUser.getCurrentUser().logOut();
-            transitionToSocialMediaActivity();
-        }
-
 
 
     }
@@ -127,6 +128,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
             case R.id.btnLogIn:
                 Intent i = new Intent(SignUp.this, LoginActivity.class);
                 startActivity(i);
+                finish();
                 break;
         }
     }
@@ -143,6 +145,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
     }
     private void transitionToSocialMediaActivity() {
         Intent i = new Intent(SignUp.this,SocialMediaActivity.class);
+        finish();
         startActivity(i);
     }
 }

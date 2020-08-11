@@ -82,6 +82,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
                 break;
             case R.id.btnSignUpLoginActivity:
+                Intent i = new Intent(this, SignUp.class);
+                startActivity(i);
+                finish();
                 break;
         }
     }
@@ -99,5 +102,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void transitionToSocialMediaActivity() {
         Intent i = new Intent(LoginActivity.this,SocialMediaActivity.class);
         startActivity(i);
+        finish();
     }
 }
